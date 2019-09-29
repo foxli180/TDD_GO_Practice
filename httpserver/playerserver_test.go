@@ -136,6 +136,21 @@ func TestFileSystemStore(t *testing.T) {
 		}
 		assertLeague(got, want, t)
 	})
+	t.Run("/league read twice", func(t *testing.T) {
+		database := strings.NewReader(`[
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 33}]`)
+		store := FileSystemPlayerStore{database}
+		got := store.GetLeague()
+		want := []Player{
+			{"Cleo", 10},
+			{"Chris", 33},
+		}
+		assertLeague(got, want, t)
+		got = store.GetLeague()
+		assertLeague(got, want, t)
+
+	})
 }
 
 func assertLeague(got []Player, wantedLeague []Player, t *testing.T) {
