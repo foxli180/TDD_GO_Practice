@@ -2,12 +2,11 @@ package httpserver
 
 import (
 	"encoding/json"
-	"io"
 	"os"
 )
 
 type FileSystemPlayerStore struct {
-	Database io.Writer
+	Database *json.Encoder
 	League   League
 }
 
@@ -15,7 +14,7 @@ func NewFileSystemPlayerStore(file *os.File) *FileSystemPlayerStore {
 	file.Seek(0, 0)
 	league, _ := NewLeague(file)
 	return &FileSystemPlayerStore{
-		Database: &tape{file},
+		Database: json.NewEncoder(&tape{file}),
 		League:   league,
 	}
 }
@@ -42,5 +41,5 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 	} else {
 		f.League = append(f.League, Player{name, 1})
 	}
-	json.NewEncoder(f.Database).Encode(f.League)
+	f.Database.Encode(f.League)
 }
