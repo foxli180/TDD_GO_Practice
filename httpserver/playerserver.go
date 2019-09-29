@@ -57,12 +57,15 @@ func (p *PlayerServer) playerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	leaguaTable := []Player{
+	json.NewEncoder(w).Encode(p.getLeagueTable())
+	w.WriteHeader(http.StatusOK)
+}
+
+func (p *PlayerServer) getLeagueTable() []Player {
+	return []Player{
 		{"Chris",
 			20},
 	}
-	json.NewEncoder(w).Encode(leaguaTable)
-	w.WriteHeader(http.StatusOK)
 }
 
 func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
