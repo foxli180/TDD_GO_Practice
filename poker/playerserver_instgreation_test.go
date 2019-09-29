@@ -7,10 +7,10 @@ import (
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	database, cleanDatabase := createTempFile(t, "")
+	database, cleanDatabase := CreateTempFile(t, "")
 	defer cleanDatabase()
 	store, err := NewFileSystemPlayerStore(database)
-	assertNoError(t, err)
+	AssertNoError(t, err)
 	server := NewPlayerServer(store)
 
 	player := "Pepper"
@@ -30,19 +30,19 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 		server.ServeHTTP(response, newLeagueRequest())
 		assertStatus(t, response.Code, http.StatusOK)
 
-		got := getLeagueFromResponse(response.Body, t)
+		got := GetLeagueFromResponse(response.Body, t)
 		want := []Player{
 			{"Pepper", 3},
 		}
-		assertLeague(got, want, t)
+		AssertLeague(got, want, t)
 	})
 
 	t.Run("works with an empty file", func(t *testing.T) {
-		database, cleanDatabase := createTempFile(t, "")
+		database, cleanDatabase := CreateTempFile(t, "")
 		defer cleanDatabase()
 
 		_, err := NewFileSystemPlayerStore(database)
 
-		assertNoError(t, err)
+		AssertNoError(t, err)
 	})
 }
