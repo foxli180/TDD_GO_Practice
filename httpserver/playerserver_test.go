@@ -130,7 +130,8 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Cleo", "Wins": 10},
 			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
-		store := NewFileSystemPlayerStore(database)
+		store, err := NewFileSystemPlayerStore(database)
+		assertNoError(t, err)
 		got := store.GetLeague()
 		want := League{
 			{"Cleo", 10},
@@ -143,7 +144,8 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Cleo", "Wins": 10},
 			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
-		store := NewFileSystemPlayerStore(database)
+		store, err := NewFileSystemPlayerStore(database)
+		assertNoError(t, err)
 		got := store.GetLeague()
 		want := League{
 			{"Cleo", 10},
@@ -159,7 +161,8 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Cleo", "Wins": 10},
 			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
-		store := NewFileSystemPlayerStore(database)
+		store, err := NewFileSystemPlayerStore(database)
+		assertNoError(t, err)
 		got := store.GetPlayerScore("Chris")
 		want := 33
 		assertScoreEquals(got, want, t)
@@ -170,7 +173,8 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Cleo", "Wins": 10},
 			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
-		store := NewFileSystemPlayerStore(database)
+		store, err := NewFileSystemPlayerStore(database)
+		assertNoError(t, err)
 		store.RecordWin("Chris")
 		got := store.GetPlayerScore("Chris")
 		want := 34
@@ -182,8 +186,8 @@ func TestFileSystemStore(t *testing.T) {
 			{"Name": "Cleo", "Wins": 10},
 			{"Name": "Chris", "Wins": 33}]`)
 		defer cleanDatabase()
-		store := NewFileSystemPlayerStore(database)
-
+		store, err := NewFileSystemPlayerStore(database)
+		assertNoError(t, err)
 		store.RecordWin("Pepper")
 		got := store.GetPlayerScore("Pepper")
 		want := 1
@@ -265,6 +269,13 @@ func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want s
 	t.Helper()
 	if response.Header().Get("content-type") != want {
 		t.Errorf("response did not have content-type of %s, got %v", want, response.HeaderMap)
+	}
+}
+
+func assertNoError(t *testing.T, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatalf("didn't expect an error but got one, %v", err)
 	}
 }
 
