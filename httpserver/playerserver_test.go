@@ -191,6 +191,21 @@ func TestFileSystemStore(t *testing.T) {
 	})
 }
 
+func TestTape_Write(t *testing.T) {
+	file, clean := createTempFile(t, "12345")
+	defer clean()
+	tape := &tape{file}
+	tape.Write([]byte("abc"))
+	file.Seek(0, 0)
+	newFileContents, _ := ioutil.ReadAll(file)
+	got := string(newFileContents)
+	want := "abc"
+
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
+
 func assertScoreEquals(got int, want int, t *testing.T) {
 	if got != want {
 		t.Errorf("got %d want %d", got, want)
@@ -253,7 +268,7 @@ func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want s
 	}
 }
 
-func createTempFile(t *testing.T, initialData string) (io.ReadWriteSeeker, func()) {
+func createTempFile(t *testing.T, initialData string) (*os.File, func()) {
 	t.Helper()
 	tmpfile, err := ioutil.TempFile("", "db")
 	if err != nil {
