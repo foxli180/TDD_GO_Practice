@@ -110,11 +110,24 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	t.Run("get score", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, newGetScoreRequest(player))
+		assertStatus(t, response.Code, http.StatusOK)
+		assertResponseBody(t, response.Body.String(), "3")
+	})
 
-	response := httptest.NewRecorder()
-	server.ServeHTTP(response, newGetScoreRequest(player))
-	assertStatus(t, response.Code, http.StatusOK)
-	assertResponseBody(t, response.Body.String(), "3")
+	t.Run("get league", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, newLeagueRequest())
+		assertStatus(t, response.Code, http.StatusOK)
+
+		got := getLeagueFromResponse(response.Body, t)
+		want := []Player{
+			{"Pepper", 3},
+		}
+		assertLeague(got, want, t)
+	})
 }
 
 func TestLeague(t *testing.T) {
@@ -134,16 +147,19 @@ func TestLeague(t *testing.T) {
 		got := getLeagueFromResponse(response.Body, t)
 		assertStatus(t, response.Code, http.StatusOK)
 		assertLeague(got, wantedLeague, t)
+		assertContentType(t, response, jsonContentType)
 	})
 }
 
 func assertLeague(got []Player, wantedLeague []Player, t *testing.T) {
+	t.Helper()
 	if !reflect.DeepEqual(got, wantedLeague) {
 		t.Errorf("got %v want %v", got, wantedLeague)
 	}
 }
 
 func getLeagueFromResponse(body io.Reader, t *testing.T) []Player {
+	t.Helper()
 	var got []Player
 	err := json.NewDecoder(body).Decode(&got)
 	if err != nil {
@@ -180,4 +196,13 @@ func assertResponseBody(t *testing.T, got, want string) {
 		t.Errorf("got '%s', want '%s'", got, want)
 	}
 
+}
+
+const jsonContentType = "application/json"
+
+func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want string) {
+	t.Helper()
+	if response.Header().Get("content-type") != want {
+		t.Errorf("response did not have content-type of %s, got %v", want, response.HeaderMap)
+	}
 }

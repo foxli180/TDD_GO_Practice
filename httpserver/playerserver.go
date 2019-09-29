@@ -27,25 +27,6 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 	return p
 }
 
-//func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-//	p.router.ServeHTTP(w, r)
-//}
-
-//func (p *PlayerServer) RecordWin(name string) {
-//	panic("implement me")
-//}
-
-//func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-//
-//	router := http.NewServeMux()
-//
-//	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-//
-//	router.Handle("/players", http.HandlerFunc(p.playerHandler))
-//
-//	router.ServeHTTP(w, r)
-//}
-
 func (p *PlayerServer) playerHandler(w http.ResponseWriter, r *http.Request) {
 	player := r.URL.Path[len("/players/"):]
 	switch r.Method {
@@ -59,15 +40,8 @@ func (p *PlayerServer) playerHandler(w http.ResponseWriter, r *http.Request) {
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(p.store.GetLeague())
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("content-type", "application/json")
 }
-
-//func (p *PlayerServer) getLeagueTable() []Player {
-//	return []Player{
-//		{"Chris",
-//			20},
-//	}
-//}
 
 func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 
