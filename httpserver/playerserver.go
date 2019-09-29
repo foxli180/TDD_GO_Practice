@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -56,6 +57,11 @@ func (p *PlayerServer) playerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
+	leaguaTable := []Player{
+		{"Chris",
+			20},
+	}
+	json.NewEncoder(w).Encode(leaguaTable)
 	w.WriteHeader(http.StatusOK)
 }
 
