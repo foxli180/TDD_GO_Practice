@@ -18,8 +18,8 @@ func NewLeague(rdr io.Reader) (League, error) {
 }
 
 func (f *FileSystemPlayerStore) GetLeague() League {
-	f.database.Seek(0, 0)
-	league, _ := NewLeague(f.database)
+	f.Database.Seek(0, 0)
+	league, _ := NewLeague(f.Database)
 	return league
 }
 

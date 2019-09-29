@@ -6,7 +6,7 @@ import (
 )
 
 type FileSystemPlayerStore struct {
-	database io.ReadWriteSeeker
+	Database io.ReadWriteSeeker
 }
 
 func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
@@ -29,6 +29,6 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		league = append(league, Player{name, 1})
 	}
 
-	f.database.Seek(0, 0)
-	json.NewEncoder(f.database).Encode(league)
+	f.Database.Seek(0, 0)
+	json.NewEncoder(f.Database).Encode(league)
 }
