@@ -11,6 +11,7 @@ import (
 type StubPlayerStore struct {
 	scores   map[string]int
 	winCalls []string
+	league   []Player
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
@@ -28,7 +29,7 @@ func TestGetPlayers(t *testing.T) {
 		map[string]int{
 			"Pepper": 20,
 			"Floyd":  10,
-		}, nil,
+		}, nil, nil,
 	}
 	server := NewPlayerServer(&store)
 
@@ -72,7 +73,7 @@ func TestGetPlayers(t *testing.T) {
 
 func TestStoreWins(t *testing.T) {
 	store := StubPlayerStore{
-		map[string]int{}, nil,
+		map[string]int{}, nil, nil,
 	}
 
 	server := NewPlayerServer(&store)
