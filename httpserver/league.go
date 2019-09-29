@@ -17,12 +17,6 @@ func NewLeague(rdr io.Reader) (League, error) {
 	return league, err
 }
 
-func (f *FileSystemPlayerStore) GetLeague() League {
-	f.Database.Seek(0, 0)
-	league, _ := NewLeague(f.Database)
-	return league
-}
-
 func (l League) Find(name string) *Player {
 	for i, p := range l {
 		if p.Name == name {
