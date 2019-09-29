@@ -16,7 +16,11 @@ func main() {
 		log.Fatalf("problem opening %s %v", dbFileName, err)
 	}
 
-	store, _ := poker.NewFileSystemPlayerStore(db)
+	store, err := poker.NewFileSystemPlayerStore(db)
+	if err != nil {
+		log.Fatalf("problem creating file system player store, %v ", err)
+	}
+
 	server := poker.NewPlayerServer(store)
 
 	if err := http.ListenAndServe(":5000", server); err != nil {
