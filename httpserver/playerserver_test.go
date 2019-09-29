@@ -15,10 +15,10 @@ import (
 type StubPlayerStore struct {
 	scores   map[string]int
 	winCalls []string
-	league   []Player
+	league   League
 }
 
-func (s *StubPlayerStore) GetLeague() []Player {
+func (s *StubPlayerStore) GetLeague() League {
 	return s.league
 }
 
@@ -106,7 +106,7 @@ func TestStoreWins(t *testing.T) {
 func TestLeague(t *testing.T) {
 
 	t.Run("it returns 200 on /league", func(t *testing.T) {
-		wantedLeague := []Player{
+		wantedLeague := League{
 			{"Cleo", 32},
 			{"Chris", 20},
 			{"Tiest", 14},
@@ -132,7 +132,7 @@ func TestFileSystemStore(t *testing.T) {
 		defer cleanDatabase()
 		store := FileSystemPlayerStore{database}
 		got := store.GetLeague()
-		want := []Player{
+		want := League{
 			{"Cleo", 10},
 			{"Chris", 33},
 		}
@@ -145,7 +145,7 @@ func TestFileSystemStore(t *testing.T) {
 		defer cleanDatabase()
 		store := FileSystemPlayerStore{database}
 		got := store.GetLeague()
-		want := []Player{
+		want := League{
 			{"Cleo", 10},
 			{"Chris", 33},
 		}
@@ -197,16 +197,16 @@ func assertScoreEquals(got int, want int, t *testing.T) {
 	}
 }
 
-func assertLeague(got []Player, wantedLeague []Player, t *testing.T) {
+func assertLeague(got League, wantedLeague League, t *testing.T) {
 	t.Helper()
 	if !reflect.DeepEqual(got, wantedLeague) {
 		t.Errorf("got %v want %v", got, wantedLeague)
 	}
 }
 
-func getLeagueFromResponse(body io.Reader, t *testing.T) []Player {
+func getLeagueFromResponse(body io.Reader, t *testing.T) League {
 	t.Helper()
-	var got []Player
+	var got League
 	err := json.NewDecoder(body).Decode(&got)
 	if err != nil {
 		t.Fatalf("unable to parse response from server '%s' into slice of Player, '%v'", body, err)
