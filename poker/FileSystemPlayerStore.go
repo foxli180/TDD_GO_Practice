@@ -9,8 +9,8 @@ import (
 )
 
 type FileSystemPlayerStore struct {
-	Database *json.Encoder
-	League   League
+	database *json.Encoder
+	league   League
 }
 
 type ReadWriteSeekTruncate interface {
@@ -51,8 +51,8 @@ func NewFileSystemPlayerStore(file *os.File) (*FileSystemPlayerStore, error) {
 		return nil, fmt.Errorf("problem loading player store from file %s, %v", file.Name(), err)
 	}
 	return &FileSystemPlayerStore{
-		Database: json.NewEncoder(&tape{file}),
-		League:   league,
+		database: json.NewEncoder(&tape{file}),
+		league:   league,
 	}, nil
 }
 
@@ -74,15 +74,15 @@ func initialisePlayerDBFile(file *os.File) error {
 }
 
 func (f *FileSystemPlayerStore) GetLeague() League {
-	sort.Slice(f.League, func(i, j int) bool {
-		return f.League[i].Wins > f.League[j].Wins
+	sort.Slice(f.league, func(i, j int) bool {
+		return f.league[i].Wins > f.league[j].Wins
 	})
-	return f.League
+	return f.league
 }
 
 func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 
-	player := f.League.Find(name)
+	player := f.league.Find(name)
 
 	if player != nil {
 		return player.Wins
@@ -91,12 +91,12 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 }
 
 func (f *FileSystemPlayerStore) RecordWin(name string) {
-	player := f.League.Find(name)
+	player := f.league.Find(name)
 
 	if player != nil {
 		player.Wins++
 	} else {
-		f.League = append(f.League, Player{name, 1})
+		f.league = append(f.league, Player{name, 1})
 	}
-	f.Database.Encode(f.League)
+	f.database.Encode(f.league)
 }
